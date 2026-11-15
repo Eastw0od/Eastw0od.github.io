@@ -5,10 +5,11 @@
   const scriptUrl = document.currentScript.src;
   const shaderNames = ["geometry", "emission", "blur", "composite"];
   const camera = { center: [0.5, 0.48], tilt: 0.09, scale: 27.5, inclination: 0.072, inner: 1.51 };
+  const playbackRate = 0.4;
 
   async function startBlackHole() {
     const gl = canvas.getContext("webgl2", {
-      alpha: false, antialias: false, depth: false, stencil: false,
+      alpha: true, antialias: false, depth: false, stencil: false,
     });
     if (!gl?.getExtension("EXT_color_buffer_float")) return;
 
@@ -57,8 +58,10 @@
 
     const [geometry, emission, blur, composite] = shaders.map(link);
     gl.deleteShader(vertex);
-    const size = Math.min(720, Math.max(320, Math.round(canvas.clientWidth * 0.83)));
-    canvas.width = canvas.height = size;
+    let size = 0;
+    let maps;
+    let hdr;
+    let bloom;
 
     function makeTarget(side, count = 1, geometryMap = false) {
       const framebuffer = gl.createFramebuffer();
@@ -86,13 +89,6 @@
       return { framebuffer, textures, side };
     }
 
-    const maps = makeTarget(size, 3, true);
-    const hdr = makeTarget(size);
-    const bloom = [2, 4, 12, 24].map((divisor) => {
-      const side = Math.floor(size / divisor);
-      return [makeTarget(side), makeTarget(side)];
-    });
-
     function use(pass, target, time = 0) {
       gl.useProgram(pass.program);
       gl.bindFramebuffer(gl.FRAMEBUFFER, target?.framebuffer ?? null);
@@ -113,12 +109,35 @@
 
     const draw = () => gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    // Ray paths only depend on the camera. Reuse the optical map for each frame.
-    use(geometry, maps);
-    gl.uniform1f(geometry.uniforms.uScale, camera.scale);
-    gl.uniform1f(geometry.uniforms.uInclination, camera.inclination);
-    gl.uniform1f(geometry.uniforms.uInner, camera.inner);
-    draw();
+    function resizeTargets() {
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+      const cap = window.innerWidth <= 760 ? 840 : 1280;
+      const nextSize = Math.min(cap, Math.max(320, Math.round(canvas.clientWidth * pixelRatio)));
+      if (nextSize === size) return false;
+
+      if (maps) {
+        for (const target of [maps, hdr, ...bloom.flat()]) {
+          gl.deleteFramebuffer(target.framebuffer);
+          target.textures.forEach((texture) => gl.deleteTexture(texture));
+        }
+      }
+      size = nextSize;
+      canvas.width = canvas.height = size;
+      maps = makeTarget(size, 3, true);
+      hdr = makeTarget(size);
+      bloom = [2, 4, 12, 24].map((divisor) => {
+        const side = Math.floor(size / divisor);
+        return [makeTarget(side), makeTarget(side)];
+      });
+
+      // The optical map is shared by every frame at this resolution.
+      use(geometry, maps);
+      gl.uniform1f(geometry.uniforms.uScale, camera.scale);
+      gl.uniform1f(geometry.uniforms.uInclination, camera.inclination);
+      gl.uniform1f(geometry.uniforms.uInner, camera.inner);
+      draw();
+      return true;
+    }
 
     function render(time) {
       use(emission, hdr, time);
@@ -144,6 +163,7 @@
       draw();
     }
 
+    resizeTargets();
     render(0);
     if (gl.getError() !== gl.NO_ERROR) throw new Error("Black hole render failed");
     canvas.classList.add("is-rendered");
@@ -153,10 +173,11 @@
     let frame = 0;
     let lastFrame = 0;
     let time = 0;
+    let resizeTimer;
 
     function animate(now) {
       if (now - lastFrame >= 1000 / 30) {
-        time = (time + Math.min((now - lastFrame) / 1000, 0.07)) % 8;
+        time = (time + Math.min((now - lastFrame) / 1000, 0.07) * playbackRate) % 8;
         render(time);
         lastFrame = now;
       }
@@ -177,8 +198,15 @@
     }).observe(canvas);
     document.addEventListener("visibilitychange", syncAnimation);
     motion.addEventListener("change", syncAnimation);
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (!gl.isContextLost() && resizeTargets()) render(time);
+      }, 180);
+    });
     canvas.addEventListener("webglcontextlost", () => {
       cancelAnimationFrame(frame);
+      clearTimeout(resizeTimer);
       canvas.classList.remove("is-rendered");
     });
     syncAnimation();
