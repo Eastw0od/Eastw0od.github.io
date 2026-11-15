@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080713">
+  <meta name="description" content="A neon-noir pixel portfolio for code, design and experiments.">
+  <title>VOID SIGNAL // Personal Portfolio</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="返回顶部">
+      <span class="brand-mark">◈</span>
+      <span data-profile="handle">YOUR_HANDLE</span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="#work">01 / WORK</a>
+      <a href="#about">02 / ABOUT</a>
+      <a href="#contact">03 / CONTACT</a>
+    </nav>
+    <div class="status"><i></i><span>ONLINE</span></div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-image" role="img" aria-label="雨夜未来都市中，一名孤独旅人仰望巨型像素全息影像"></div>
+      <div class="hero-vignette" aria-hidden="true"></div>
+      <canvas id="rain" aria-hidden="true"></canvas>
+
+      <div class="hero-copy reveal">
+        <p class="eyebrow">PERSONAL TERMINAL / <span id="local-time">00:00:00</span></p>
+        <h1 id="hero-title">
+          <span>BUILDING</span>
+          <span class="accent">SIGNALS</span>
+          <span>IN THE NOISE.</span>
+        </h1>
+        <p class="intro" data-profile="intro">I turn code, systems and strange ideas into things people can feel.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#work">ENTER ARCHIVE <span>↘</span></a>
+          <a class="button ghost" data-link="github" href="#">GITHUB ↗</a>
+        </div>
+      </div>
+
+      <div class="telemetry" aria-label="系统状态">
+        <p><span>LOC</span><b data-profile="location">EARTH / UTC+8</b></p>
+        <p><span>MODE</span><b>OPEN TO BUILD</b></p>
+        <p><span>SIGNAL</span><b>98.7%</b></p>
+      </div>
+
+      <div class="scroll-cue" aria-hidden="true"><span></span>SCROLL TO DECODE</div>
+    </section>
+
+    <section class="section work" id="work" aria-labelledby="work-title">
+      <div class="section-heading reveal">
+        <p class="eyebrow">SELECTED TRANSMISSIONS</p>
+        <h2 id="work-title">Projects from<br>the near future.</h2>
+        <p>把这里替换成你的真实项目。卡片内容集中在 <code>profile.js</code>，不用改页面结构。</p>
+      </div>
+      <div class="project-grid" id="project-grid"></div>
+    </section>
+
+    <section class="section about" id="about" aria-labelledby="about-title">
+      <div class="ascii-portrait reveal" aria-hidden="true">
+<pre>        .-----------------.
+      .'   _         _     '.
+     /    / \  010  / \      \
+    |    |   |     |   |      |
+    |     \_/  ___  \_/       |
+    |         /___\            |
+     \    .-._     _.-.       /
+      '._/    '---'    \___.''
+          SIGNAL / HUMAN</pre>
+      </div>
+      <div class="about-copy reveal">
+        <p class="eyebrow">ABOUT THE OPERATOR</p>
+        <h2 id="about-title">Human curiosity.<br>Machine precision.</h2>
+        <p data-profile="bio">I am a student developer exploring the border between software, visual systems and artificial intelligence.</p>
+        <ul class="stack" aria-label="技术方向">
+          <li>FRONTEND SYSTEMS</li>
+          <li>AI EXPERIMENTS</li>
+          <li>CREATIVE CODING</li>
+          <li>OPEN SOURCE</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <p class="eyebrow reveal">OPEN CHANNEL</p>
+      <h2 id="contact-title" class="reveal">Have a strange idea?<br><span>Let's make it real.</span></h2>
+      <a class="contact-link reveal" data-link="email" href="mailto:hello@example.com">
+        <span data-profile="email">hello@example.com</span><b>↗</b>
+      </a>
+      <div class="contact-meta reveal">
+        <p>AVAILABLE FOR COLLABORATION</p>
+        <p>DESIGNED &amp; CODED IN THE RAIN</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <span id="year"></span> <span data-profile="name">YOUR NAME</span></span>
+    <span>HOSTED ON GITHUB PAGES</span>
+    <a href="#top">BACK TO TOP ↑</a>
+  </footer>
+
+  <script src="./profile.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>
