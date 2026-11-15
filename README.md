@@ -1,10 +1,10 @@
 # Personal Archive
 
-A restrained personal portfolio inspired by editorial science sites: a live ASCII/pixel singularity, selected work, and a curated cinema wall.
+A personal portfolio built around an original WebGL black-hole shader, a clear introduction, selected work, linked services, and a curated cinema wall.
 
 ## Edit your content
 
-All personal text, project entries, links, and films live in `profile.js`. The page structure is in `index.html`; visual styling is in `styles.css`; the animated black hole is drawn by `script.js`.
+All personal text, project entries, services, links, and films live in `profile.js`. The page structure is in `index.html`; visual styling is in `styles.css`; the animated black hole is rendered with WebGL in `script.js`.
 
 ## Preview locally
 

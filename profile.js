@@ -1,15 +1,20 @@
 window.PORTFOLIO = {
-  name: "YOUR NAME",
-  role: "Student · Builder · Observer",
-  intro: "I collect questions, build small systems, and keep a record of what changes me.",
-  bio: "I am a student exploring software, artificial intelligence and visual culture.",
-  location: "HONG KONG / UTC+8",
-  email: "hello@example.com",
-  links: { github: "https://github.com/your-username", email: "mailto:hello@example.com" },
+  name: "Eastwood",
+  badge: "HIT STUDENT · BUILDING WITH AI",
+  role: "Developer · Researcher · Film Observer",
+  intro: "I build practical AI tools, explore intelligent systems, and document the films and ideas that shape how I see the world.",
+  bio: "I am Eastwood, a student at Harbin Institute of Technology, exploring artificial intelligence, open-source software and visual culture.",
+  location: "HARBIN / UTC+8",
+  email: "GitHub / @Eastw0od",
+  links: { github: "https://github.com/Eastw0od", email: "https://github.com/Eastw0od" },
   projects: [
-    { year: "2026", title: "Signal Archive", note: "A personal memory system for notes, research and fragments.", tags: "WEB / SEARCH / KNOWLEDGE", url: "#" },
-    { year: "2026", title: "Synthetic Weather", note: "Environmental data translated into digital atmosphere.", tags: "CANVAS / DATA / GENERATIVE", url: "#" },
-    { year: "ONGOING", title: "Open Terminal", note: "Small tools that remove friction from creative work.", tags: "OPEN SOURCE / TOOLS", url: "#" }
+    { year: "2026", title: "TradingAgents Simplified", note: "An experiment in making multi-agent trading workflows easier to understand and run.", tags: "AI AGENTS / SHELL / RESEARCH", url: "https://github.com/Eastw0od/TradingAgents-Simplified" },
+    { year: "2026", title: "Emosticker", note: "An open-source experiment around expression, interaction and lightweight tools.", tags: "OPEN SOURCE / EXPERIMENT", url: "https://github.com/Eastw0od/emosticker" }
+  ],
+  services: [
+    { number: "01", title: "AI Prototype", description: "Turn an early AI idea into a small, testable working prototype.", label: "View agent project", url: "https://github.com/Eastw0od/TradingAgents-Simplified" },
+    { number: "02", title: "Workflow & Automation", description: "Reduce repetitive work with scripts, integrations and focused internal tools.", label: "Discuss on GitHub", url: "https://github.com/Eastw0od" },
+    { number: "03", title: "Open-source Collaboration", description: "Explore, simplify and document an open-source project together.", label: "Browse repositories", url: "https://github.com/Eastw0od?tab=repositories" }
   ],
   films: [
     { title: "BLADE RUNNER 2049", year: "2017", director: "DENIS VILLENEUVE", palette: ["#c55d92", "#17272f"] },

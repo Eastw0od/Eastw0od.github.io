@@ -13,18 +13,19 @@
   <header class="site-header">
     <a class="identity" href="#top" aria-label="返回首页"><i></i><span data-profile="name">YOUR NAME</span></a>
     <nav aria-label="主导航">
-      <a href="#about">About</a><a href="#work">Work</a><a href="#cinema">Cinema</a><a data-link="github" href="#">GitHub ↗</a>
+      <a href="#about">About</a><a href="#work">Work</a><a href="#services">Services</a><a href="#cinema">Cinema</a><a data-link="github" href="#">GitHub ↗</a>
     </nav>
     <button class="menu-button" type="button" aria-expanded="false" aria-label="打开菜单">Menu</button>
   </header>
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
-      <canvas id="singularity" aria-label="由字符和像素构成的旋转黑洞"></canvas>
+      <canvas id="singularity" aria-label="由 WebGL 实时渲染的彩色吸积盘黑洞"></canvas>
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-copy">
-        <p class="kicker">PORTFOLIO / <span id="local-time">00:00</span></p>
+        <p class="hero-badge"><i></i><span data-profile="badge">HIT STUDENT · BUILDING WITH AI</span></p>
         <h1 id="hero-title"><span data-profile="name">YOUR NAME</span><small data-profile="role">Student · Builder · Observer</small></h1>
         <p class="intro" data-profile="intro">I collect questions, build small systems, and keep a record of what changes me.</p>
+        <div class="hero-actions"><a class="primary-action" href="#services">Explore my services <span>→</span></a><a data-link="github" href="#">GitHub ↗</a></div>
       </div>
       <p class="coordinates"><span data-profile="location">HONG KONG / UTC+8</span><br>SCROLL TO ENTER THE ARCHIVE ↓</p>
     </section>
@@ -36,16 +37,20 @@
       <header class="section-title"><p class="section-index">02 / SELECTED WORK</p><h2 id="work-title">Experiments &amp;<br>small systems.</h2></header>
       <div class="project-list" id="project-list"></div>
     </section>
+    <section class="services section" id="services" aria-labelledby="services-title">
+      <header class="section-title services-heading"><p class="section-index">03 / SERVICES</p><div><h2 id="services-title">Ways I can<br>help you build.</h2><p>从想法验证到可运行的原型。每项服务都连接到对应项目或联系入口。</p></div></header>
+      <div class="service-grid" id="service-grid"></div>
+    </section>
     <section class="cinema section" id="cinema" aria-labelledby="cinema-title">
-      <header class="section-title cinema-heading"><div><p class="section-index">03 / CINEMA LOG</p><h2 id="cinema-title">Films that left<br>an afterimage.</h2></div><p>不是排行榜，只是一面持续生长的电影墙。先用排版和色彩建立气氛，之后可以换成你的真实片单和海报。</p></header>
+      <header class="section-title cinema-heading"><div><p class="section-index">04 / CINEMA LOG</p><h2 id="cinema-title">Films that left<br>an afterimage.</h2></div><p>不是排行榜，只是一面持续生长的电影墙。先用排版和色彩建立气氛，之后可以换成你的真实片单和海报。</p></header>
       <div class="film-wall" id="film-wall"></div>
     </section>
     <section class="contact section" id="contact">
-      <p class="section-index">04 / CONTACT</p><h2>Let’s exchange<br><em>strange ideas.</em></h2>
+      <p class="section-index">05 / CONTACT</p><h2>Let’s exchange<br><em>strange ideas.</em></h2>
       <a data-link="email" href="mailto:hello@example.com"><span data-profile="email">hello@example.com</span><b>↗</b></a>
     </section>
   </main>
-  <footer><span>© <span id="year"></span> <span data-profile="name">YOUR NAME</span></span><span>BUILT WITH HTML, CANVAS &amp; CURIOSITY</span><a href="#top">TOP ↑</a></footer>
+  <footer><span>© <span id="year"></span> <span data-profile="name">YOUR NAME</span></span><span>BUILT WITH HTML, WEBGL &amp; CURIOSITY</span><a href="#top">TOP ↑</a></footer>
   <script src="./profile.js"></script><script src="./script.js"></script>
 </body>
 </html>
