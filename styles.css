@@ -25,7 +25,8 @@
   transition: transform 460ms ease-out;
 }
 
-#singularity {
+#singularity, .hero-black-hole-poster {
+  position: absolute;
   z-index: 1;
   inset: 48% auto auto 73%;
   width: min(1050px, 88vw, 128svh);
@@ -33,12 +34,13 @@
   aspect-ratio: 1;
   transform: translate(calc(-50% + var(--hole-x, 0px)), calc(-50% + var(--hole-y, 0px)))
     perspective(1250px) rotateY(var(--hole-yaw, 0deg)) rotateX(var(--hole-pitch, 0deg));
-  opacity: 0;
   pointer-events: none;
-  transition: opacity 350ms ease, transform 460ms ease-out;
+  transition: transform 460ms ease-out;
 }
 
+#singularity { opacity: 0; }
 #singularity.is-rendered { opacity: 1; }
+#singularity.is-rendered + .hero-black-hole-poster { opacity: 0; }
 
 .hero::after {
   background: linear-gradient(90deg, #0009 2%, #0007 32%, transparent 61%),
@@ -46,11 +48,23 @@
 }
 
 @media (max-width: 760px) {
-  .hero { background-image: radial-gradient(ellipse at 50% 35%, #1b1007, #090602 18%, #000 50%); }
-  #singularity { inset: 34% auto auto 50%; width: min(145vw, 86svh); }
+  .hero {
+    --visual-height: clamp(13rem, 43svh, 23rem);
+    background-image: radial-gradient(ellipse at 50% 35%, #1b1007, #090602 18%, #000 50%);
+    display: grid;
+    grid-template-rows: var(--visual-height) auto;
+    align-content: space-between;
+    row-gap: clamp(1rem, 5svh, 2.8rem);
+    padding: 72px 1.5rem clamp(2rem, 6svh, 3.5rem);
+  }
+  #singularity, .hero-black-hole-poster {
+    inset: calc(72px + var(--visual-height) * 0.57) auto auto 50%;
+    width: min(145vw, calc(var(--visual-height) * 2.65));
+  }
+  .hero-copy { position: relative; inset: auto; grid-row: 2; min-width: 0; overflow-wrap: anywhere; }
   .hero::after { background: linear-gradient(0deg, #030405 2%, #030405aa 34%, transparent 64%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #singularity, .hero-sky { transition: none; }
+  #singularity, .hero-black-hole-poster, .hero-sky { transition: none; }
 }

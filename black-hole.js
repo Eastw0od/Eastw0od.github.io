@@ -7,18 +7,18 @@
   const camera = { center: [0.5, 0.48], tilt: 0.09, scale: 27.5, inclination: 0.072, inner: 1.51 };
   const playbackRate = 0.4;
 
-  async function startBlackHole() {
+  async function startBlackHole(signal) {
     const gl = canvas.getContext("webgl2", {
       alpha: true, antialias: false, depth: false, stencil: false,
     });
     if (!gl?.getExtension("EXT_color_buffer_float")) return;
 
     const shaders = await Promise.all(shaderNames.map(async (name) => {
-      const response = await fetch(new URL(`./vendor/glsl-black-hole/shaders/${name}.frag`, scriptUrl));
+      const response = await fetch(new URL(`./vendor/glsl-black-hole/shaders/${name}.frag`, scriptUrl), { signal });
       if (!response.ok) throw new Error(`Could not load ${name} shader (${response.status})`);
       return response.text();
     }));
-    if (gl.isContextLost()) return;
+    if (signal.aborted || gl.isContextLost()) return;
 
     function compile(type, source) {
       const shader = gl.createShader(type);
@@ -176,6 +176,7 @@
     let resizeTimer;
 
     function animate(now) {
+      if (gl.isContextLost()) return;
       if (now - lastFrame >= 1000 / 30) {
         time = (time + Math.min((now - lastFrame) / 1000, 0.07) * playbackRate) % 8;
         render(time);
@@ -192,25 +193,41 @@
       }
     }
 
-    new IntersectionObserver(([entry]) => {
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       syncAnimation();
-    }).observe(canvas);
-    document.addEventListener("visibilitychange", syncAnimation);
-    motion.addEventListener("change", syncAnimation);
+    });
+    visibilityObserver.observe(canvas);
+    document.addEventListener("visibilitychange", syncAnimation, { signal });
+    motion.addEventListener("change", syncAnimation, { signal });
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         if (!gl.isContextLost() && resizeTargets()) render(time);
       }, 180);
-    });
-    canvas.addEventListener("webglcontextlost", () => {
+    }, { signal });
+    signal.addEventListener("abort", () => {
       cancelAnimationFrame(frame);
       clearTimeout(resizeTimer);
-      canvas.classList.remove("is-rendered");
-    });
+      visibilityObserver.disconnect();
+    }, { once: true });
     syncAnimation();
   }
 
-  startBlackHole().catch((error) => console.error("Black hole could not render:", error));
+  let session;
+  function startSession() {
+    session = new AbortController();
+    const { signal } = session;
+    startBlackHole(signal).catch((error) => {
+      if (!signal.aborted) console.error("Black hole could not render:", error);
+    });
+  }
+
+  canvas.addEventListener("webglcontextlost", (event) => {
+    event.preventDefault();
+    session.abort();
+    canvas.classList.remove("is-rendered");
+  });
+  canvas.addEventListener("webglcontextrestored", startSession);
+  startSession();
 })();
