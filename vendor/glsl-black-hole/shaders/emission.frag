@@ -167,9 +167,9 @@ void main() {
     // Isotropic pixel footprint keeps the rim equally fine at every angle.
     float px=27.5/uResolution.y;
     float d=abs(radius-2.598);
-    float rimWidth=max(0.023,px*1.1);
-    float ring=1.35*exp(-pow(d/rimWidth,2.0));
-    ring+=0.10*exp(-pow(d/(rimWidth*2.6),2.0));
+    float rimWidth=max(0.038,px*1.6);
+    float ring=0.78*exp(-pow(d/rimWidth,2.0));
+    ring+=0.07*exp(-pow(d/(rimWidth*2.6),2.0));
     // A continuous warm-white rim; foreground plasma can still outshine it.
     col=max(col,ring*vec3(1.0,0.94,0.82));
     fragColor=vec4(col,1.0);
