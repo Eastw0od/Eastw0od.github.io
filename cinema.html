@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111519">
+  <meta name="description" content="Eastwood 的个人观影档案与电影海报墙。">
+  <title>Cinema Archive · Eastwood</title>
+  <link rel="stylesheet" href="./styles.css?v=3">
+</head>
+<body class="cinema-page">
+  <header class="site-header">
+    <a class="identity" href="./index.html#cinema" aria-label="返回个人主页"><i></i><span>EASTWOOD / CINEMA ARCHIVE</span></a>
+    <nav aria-label="电影墙导航"><a href="./index.html">Home</a><a href="./index.html#cinema">Back to archive</a><a href="https://movie.douban.com/people/209420532/collect" target="_blank" rel="noreferrer">Douban ↗</a></nav>
+  </header>
+  <main>
+    <section class="cinema-archive section" aria-labelledby="archive-title">
+      <header class="archive-intro">
+        <div><p class="section-index">EASTWOOD / WATCHED FILMS</p><h1 id="archive-title">The complete<br>cinema log.</h1></div>
+        <p>这里收录我的公开豆瓣“看过”记录。共 617 条历史标记，其中 608 条仍可读取；评分、观看日期与短评均保留原样。</p>
+      </header>
+      <div class="cinema-toolbar" aria-label="筛选电影墙">
+        <label class="film-search"><span>SEARCH</span><input id="film-search" type="search" placeholder="片名、年份或短评" autocomplete="off"></label>
+        <label><span>RATING</span><select id="film-rating"><option value="all">全部评分</option><option value="5">★★★★★</option><option value="4">★★★★ 及以上</option><option value="3">★★★ 及以上</option><option value="unrated">未评分</option></select></label>
+        <label><span>ORDER</span><select id="film-order"><option value="recent">最近观看</option><option value="oldest">最早观看</option><option value="rating">个人评分</option><option value="year">上映年份</option></select></label>
+        <p id="film-status" aria-live="polite">正在读取观影记录…</p>
+      </div>
+      <div class="film-wall cinema-full" id="film-wall" data-mode="archive"></div>
+      <button class="film-more" id="film-more" type="button" hidden>继续展开 <span>↓</span></button>
+      <p class="cinema-source">DATA FROM <a href="https://movie.douban.com/people/209420532/collect" target="_blank" rel="noreferrer">DOUBAN / JONATHAN ↗</a></p>
+    </section>
+  </main>
+  <footer><span>© 2026 EASTWOOD</span><a href="./index.html">PERSONAL ARCHIVE</a><a href="#archive-title">TOP ↑</a></footer>
+  <script src="./cinema.js?v=1"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#181d22">
   <meta name="description" content="A quiet personal archive for code, films and unfinished thoughts.">
   <title>Personal Archive</title>
-  <link rel="stylesheet" href="./styles.css?v=2">
+  <link rel="stylesheet" href="./styles.css?v=3">
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -43,8 +43,10 @@
       <div class="service-grid" id="service-grid"></div>
     </section>
     <section class="cinema section" id="cinema" aria-labelledby="cinema-title">
-      <header class="section-title cinema-heading"><div><p class="section-index">04 / CINEMA LOG</p><h2 id="cinema-title">Films that left<br>an afterimage.</h2></div><p>不是排行榜，只是一面持续生长的电影墙。先用排版和色彩建立气氛，之后可以换成你的真实片单和海报。</p></header>
-      <div class="film-wall" id="film-wall"></div>
+      <header class="section-title cinema-heading"><div><p class="section-index">04 / CINEMA LOG</p><h2 id="cinema-title">Films that left<br>an afterimage.</h2></div><p>我的真实观影档案。来自豆瓣“看过”记录，按观看时间持续生长；点击海报可回到对应条目。</p></header>
+      <div class="film-wall cinema-preview" id="film-wall" data-mode="preview"></div>
+      <a class="film-more" href="./cinema.html">展开完整电影墙 <span>→</span></a>
+      <p class="cinema-source">DATA FROM <a href="https://movie.douban.com/people/209420532/collect" target="_blank" rel="noreferrer">DOUBAN / JONATHAN ↗</a></p>
     </section>
     <section class="contact section" id="contact">
       <p class="section-index">05 / CONTACT</p><h2>Let’s exchange<br><em>strange ideas.</em></h2>
@@ -52,8 +54,8 @@
     </section>
   </main>
   <footer><span>© <span id="year"></span> <span data-profile="name">YOUR NAME</span></span><a href="https://github.com/sayed1145/glsl-black-hole">BLACK HOLE SHADER BY SAYED1145</a><a href="#top">TOP ↑</a></footer>
-  <script src="./profile.js"></script><script src="./script.js"></script>
-  <script src="./hero-sky.js?v=2" defer></script>
-  <script src="./black-hole.js?v=2" defer></script>
+  <script src="./profile.js"></script><script src="./script.js?v=3"></script><script src="./cinema.js?v=1"></script>
+  <script src="./hero-sky.js?v=3" defer></script>
+  <script src="./black-hole.js?v=3" defer></script>
 </body>
 </html>

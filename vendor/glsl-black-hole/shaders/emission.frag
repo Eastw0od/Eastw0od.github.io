@@ -151,6 +151,23 @@ void main() {
     float silk=fbmP(vec2(radius*12.0+(stream-0.5)*0.6,az*32.0-uTime/8.0*8.0),8.0,27.5/uResolution.y*12.0);
     float arcMask=smoothstep(0.018,0.055,abs(q.y));
     col*=mix(1.0,0.58+0.84*silk,arcMask);
+    // Sparse hot dust drifting through the projected accretion plane. Two
+    // differently scaled fields keep the grains crisp without a texture.
+    vec2 dustUv=vec2(q.x*205.0-uTime*2.1,q.y*330.0);
+    vec2 dustId=floor(dustUv),dustCell=fract(dustUv)-0.5;
+    float dustSeed=hash21(dustId+17.3);
+    vec2 dustOffset=vec2(hash21(dustId+3.7),hash21(dustId+9.1))-0.5;
+    float dustPoint=1.0-smoothstep(0.035,0.115,length(dustCell-dustOffset*0.72));
+    float dustLife=0.56+0.44*sin(uTime*2.7+dustSeed*TAU);
+    float dustBand=exp(-pow(abs(q.y)/(0.036+0.022*smoothstep(3.0,13.0,radius)),1.45));
+    float dustMask=smoothstep(2.9,3.35,radius)*(1.0-smoothstep(13.2,15.4,radius));
+    float sparks=dustPoint*step(0.79,dustSeed)*dustBand*dustMask*max(0.16,dustLife);
+    vec2 moteUv=vec2(q.x*118.0+uTime*0.9,q.y*185.0-uTime*0.16);
+    vec2 moteId=floor(moteUv),moteCell=fract(moteUv)-0.5;
+    float moteSeed=hash21(moteId+41.8);
+    float motes=(1.0-smoothstep(0.025,0.095,length(moteCell-(vec2(hash21(moteId+1.2),hash21(moteId+5.4))-0.5)*0.6)));
+    motes*=step(0.91,moteSeed)*exp(-pow(abs(q.y)/0.078,1.35))*dustMask;
+    col+=(sparks*0.54+motes*0.34)*mix(vec3(1.0,0.48,0.22),vec3(1.0,0.92,0.72),dustSeed);
     float px=max(fwidth(radius)*0.85,0.016);
     float d=abs(radius-2.598);
     float ring=(1.0-smoothstep(px*0.08,px*0.76,d))*0.54;
