@@ -164,12 +164,13 @@ void main() {
     float motes=(1.0-smoothstep(0.025,0.095,length(moteCell-(vec2(hash21(moteId+1.2),hash21(moteId+5.4))-0.5)*0.6)));
     motes*=step(0.91,moteSeed)*exp(-pow(abs(q.y)/0.078,1.35))*dustMask;
     col+=(sparks*0.12+motes*0.08)*mix(vec3(1.0,0.48,0.22),vec3(1.0,0.92,0.72),dustSeed);
-    float px=max(fwidth(radius)*0.85,0.016);
+    // Isotropic pixel footprint keeps the rim equally fine at every angle.
+    float px=27.5/uResolution.y;
     float d=abs(radius-2.598);
-    float ring=(1.0-smoothstep(px*0.08,px*0.76,d))*0.18;
-    ring+=0.025*exp(-pow(d/(px*2.5),2.0));
-    float upper=smoothstep(-0.01,0.03,p.y);
-    ring*=mix(0.42,1.0,upper);
-    col+=ring*vec3(1.0,0.64,0.46);
+    float rimWidth=max(0.023,px*1.1);
+    float ring=1.35*exp(-pow(d/rimWidth,2.0));
+    ring+=0.10*exp(-pow(d/(rimWidth*2.6),2.0));
+    // A continuous warm-white rim; foreground plasma can still outshine it.
+    col=max(col,ring*vec3(1.0,0.94,0.82));
     fragColor=vec4(col,1.0);
 }
