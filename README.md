@@ -4,7 +4,7 @@ A zero-build static portfolio designed for GitHub Pages.
 
 ## Personalize
 
-Edit `profile.js` to change your name, handle, bio, links and project cards. Replace `assets/neon-hologram-hero.png` if you want a different hero image.
+Edit `profile.js` to change your name, handle, bio, links and project cards. The active animated hero is `assets/neon-hologram-hero-v2.png`; the first generated concept is retained as `assets/neon-hologram-hero.png` for easy rollback.
 
 ## Preview locally
 
@@ -27,4 +27,4 @@ For a custom domain, configure it in **Settings → Pages** and then add the req
 
 ## Visual asset
 
-`assets/neon-hologram-hero.png` was generated as original pixel artwork for this project. It uses the atmosphere of neon-noir science fiction without reproducing a specific movie frame or character.
+`assets/neon-hologram-hero-v2.png` is a pixel-art transformation of a user-provided reference image. CSS layers add hologram breathing, scan-band glitches and pointer parallax without shipping a heavy video or GIF.

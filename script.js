@@ -82,6 +82,19 @@
     resize();
     draw();
     addEventListener("resize", resize, { passive: true });
+
+    const hero = document.querySelector(".hero");
+    hero.addEventListener("pointermove", (event) => {
+      const rect = hero.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width - .5) * 14;
+      const y = ((event.clientY - rect.top) / rect.height - .5) * 10;
+      hero.style.setProperty("--px", `${x}px`);
+      hero.style.setProperty("--py", `${y}px`);
+    }, { passive: true });
+    hero.addEventListener("pointerleave", () => {
+      hero.style.setProperty("--px", "0px");
+      hero.style.setProperty("--py", "0px");
+    });
   }
   addEventListener("pagehide", () => cancelAnimationFrame(raf));
 })();
