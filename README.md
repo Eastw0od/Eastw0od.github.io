@@ -1,14 +1,12 @@
-# Neon-noir personal site
+# Personal Archive
 
-A zero-build static portfolio designed for GitHub Pages.
+A restrained personal portfolio inspired by editorial science sites: a live ASCII/pixel singularity, selected work, and a curated cinema wall.
 
-## Personalize
+## Edit your content
 
-Edit `profile.js` to change your name, handle, bio, links and project cards. The active animated hero is `assets/neon-hologram-hero-v3.png`; earlier generated concepts are retained for easy rollback.
+All personal text, project entries, links, and films live in `profile.js`. The page structure is in `index.html`; visual styling is in `styles.css`; the animated black hole is drawn by `script.js`.
 
 ## Preview locally
-
-From this folder, run:
 
 ```powershell
 python -m http.server 4173
@@ -16,15 +14,6 @@ python -m http.server 4173
 
 Then open `http://localhost:4173`.
 
-## Publish with GitHub Pages
+## GitHub Pages
 
-1. Create a repository named `<username>.github.io` for your main personal site, or any repository name for a project site.
-2. Push these files to the `main` branch.
-3. In repository **Settings → Pages**, choose **GitHub Actions** as the source.
-4. The included workflow deploys on every push to `main`.
-
-For a custom domain, configure it in **Settings → Pages** and then add the required DNS records at your domain provider.
-
-## Visual asset
-
-`assets/neon-hologram-hero-v3.png` is a darker, particle-rich pixel-art transformation of a user-provided reference image. CSS and Canvas layers add hologram breathing, pixel dust, scan-band glitches and pointer parallax without shipping a heavy video or GIF.
+The included workflow deploys the site when `main` is pushed. For a personal homepage, name the GitHub repository `<username>.github.io` and enable GitHub Pages with **GitHub Actions** as the source.
