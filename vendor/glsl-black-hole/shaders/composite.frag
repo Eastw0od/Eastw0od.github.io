@@ -32,9 +32,11 @@ void main() {
     float holeMask=smoothstep(0.093,0.102,length(p));
     float flare=dot(0.52*b2+0.42*b3,vec3(0.26,0.60,0.14));
     float glow=1.0-exp(-flare*1.35);
-    // Suppress broad scatter inside the silhouette without erasing the disk
-    // crossing in front of it. Preserve detail by rolling off near highlights.
-    col+=mix(amber,ivory,0.28)*glow*(1.0-brightness)*mix(0.035,1.0,holeMask);
+    // Lens scatter crosses the shadow boundary, fading inward rather than
+    // clipping at it. Keep this optical falloff separate from star occlusion.
+    float inwardDepth=max(0.0,0.097-length(p));
+    float scatterMask=exp(-pow(inwardDepth/0.020,2.0));
+    col+=mix(amber,ivory,0.28)*glow*(1.0-brightness)*scatterMask;
     col*=0.988+0.024*hash21(gl_FragCoord.xy);
     col*=1.0-0.16*smoothstep(0.48,0.78,length(uv-0.5));
     vec2 edge=min(uv,1.0-uv);
