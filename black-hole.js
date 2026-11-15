@@ -2,10 +2,64 @@
 // Shader sources and the copyright notice are in vendor/glsl-black-hole.
 (() => {
   const canvas = document.querySelector("#singularity");
-  const scriptUrl = document.currentScript.src;
+  const scriptUrl = new URL(document.currentScript.src);
   const shaderNames = ["geometry", "emission", "blur", "composite"];
-  const camera = { center: [0.5, 0.48], tilt: 0.09, scale: 27.5, inclination: 0.072, inner: 1.51 };
+  const camera = { center: [0.5, 0.48], tilt: 0.09, scale: 27.5, inclination: 0.087, inner: 1.51 };
   const playbackRate = 0.4;
+  const impactBreaks = [0, 2.4, 2.82, 22];
+  const samplesPerBand = 1024;
+  const impactSamples = 3 * samplesPerBand + 1;
+  const angleSamples = 1025;
+  const maxAngle = 10;
+  let rayTable;
+
+  function traceRayTable() {
+    const table = new Float32Array(impactSamples * angleSamples);
+    const angleStep = maxAngle / (angleSamples - 1);
+    // Each ray stays in its starting plane. Schwarzschild symmetry lets the
+    // camera reuse these paths and intersect the disk from any viewing angle.
+    table.fill(1);
+    for (let column = 1; column < impactSamples; column++) {
+      const band = Math.min(2, Math.floor(column / samplesPerBand));
+      const fraction = column / samplesPerBand - band;
+      const impact = impactBreaks[band] + fraction * (impactBreaks[band + 1] - impactBreaks[band]);
+      const force = -1.5 * impact * impact;
+      let x = 80;
+      let y = impact;
+      let vx = -1;
+      let vy = 0;
+      let radius = Math.hypot(x, y);
+      let angle = Math.atan2(y, x);
+      let row = 0;
+
+      while (row * angleStep < angle) table[row++ * impactSamples + column] = 1 / 96;
+      for (let step = 0; step < 540 && row < angleSamples; step++) {
+        if (radius < 1.015 || (radius > 85 && x * vx + y * vy > 0)) break;
+        const dt = Math.max(0.012, Math.min(3, radius * 0.052));
+        const startKick = force * dt * 0.5 / Math.pow(radius, 5);
+        const halfVx = vx + x * startKick;
+        const halfVy = vy + y * startKick;
+        const nextX = x + halfVx * dt;
+        const nextY = y + halfVy * dt;
+        const nextRadius = Math.hypot(nextX, nextY);
+        const nextAngle = angle + Math.atan2(x * nextY - y * nextX, x * nextX + y * nextY);
+        while (row < angleSamples && row * angleStep <= nextAngle) {
+          const t = (row * angleStep - angle) / (nextAngle - angle);
+          table[row++ * impactSamples + column] = 1 / (radius + (nextRadius - radius) * t);
+        }
+        const endKick = force * dt * 0.5 / Math.pow(nextRadius, 5);
+        vx = halfVx + nextX * endKick;
+        vy = halfVy + nextY * endKick;
+        x = nextX;
+        y = nextY;
+        radius = nextRadius;
+        angle = nextAngle;
+      }
+      const beyondRay = radius < 1.015 ? 1 : 1 / 96;
+      while (row < angleSamples) table[row++ * impactSamples + column] = beyondRay;
+    }
+    return table;
+  }
 
   async function startBlackHole(signal) {
     const gl = canvas.getContext("webgl2", {
@@ -14,7 +68,9 @@
     if (!gl?.getExtension("EXT_color_buffer_float")) return;
 
     const shaders = await Promise.all(shaderNames.map(async (name) => {
-      const response = await fetch(new URL(`./vendor/glsl-black-hole/shaders/${name}.frag`, scriptUrl), { signal });
+      const url = new URL(`./vendor/glsl-black-hole/shaders/${name}.frag`, scriptUrl);
+      url.search = scriptUrl.search;
+      const response = await fetch(url, { signal });
       if (!response.ok) throw new Error(`Could not load ${name} shader (${response.status})`);
       return response.text();
     }));
@@ -58,10 +114,20 @@
 
     const [geometry, emission, blur, composite] = shaders.map(link);
     gl.deleteShader(vertex);
+    const rayTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, rayTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.R32F, impactSamples, angleSamples, 0, gl.RED, gl.FLOAT, rayTable ??= traceRayTable());
     let size = 0;
     let maps;
     let hdr;
     let bloom;
+    let viewX = 0;
+    let viewY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let viewDirty = true;
 
     function makeTarget(side, count = 1, geometryMap = false) {
       const framebuffer = gl.createFramebuffer();
@@ -97,7 +163,7 @@
       const { uResolution, uCenter, uTilt, uTime } = pass.uniforms;
       gl.uniform2f(uResolution ?? null, side, side);
       gl.uniform2f(uCenter ?? null, ...camera.center);
-      gl.uniform1f(uTilt ?? null, camera.tilt);
+      gl.uniform1f(uTilt ?? null, camera.tilt + viewX * 0.06);
       gl.uniform1f(uTime ?? null, time);
     }
 
@@ -110,8 +176,9 @@
     const draw = () => gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     function resizeTargets() {
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-      const cap = window.innerWidth <= 760 ? 840 : 1280;
+      const isNarrow = window.innerWidth <= 760;
+      const pixelRatio = Math.max(isNarrow ? 1.3 : 1.6, (window.devicePixelRatio || 1) * 1.12);
+      const cap = isNarrow ? 1280 : 1920;
       const nextSize = Math.min(cap, Math.max(320, Math.round(canvas.clientWidth * pixelRatio)));
       if (nextSize === size) return false;
 
@@ -130,16 +197,25 @@
         return [makeTarget(side), makeTarget(side)];
       });
 
-      // The optical map is shared by every frame at this resolution.
-      use(geometry, maps);
-      gl.uniform1f(geometry.uniforms.uScale, camera.scale);
-      gl.uniform1f(geometry.uniforms.uInclination, camera.inclination);
-      gl.uniform1f(geometry.uniforms.uInner, camera.inner);
-      draw();
+      viewDirty = true;
       return true;
     }
 
+    function updateOpticalMap() {
+      use(geometry, maps);
+      gl.uniform1f(geometry.uniforms.uScale, camera.scale);
+      gl.uniform1f(geometry.uniforms.uInclination, camera.inclination + viewY * 0.073);
+      gl.uniform1f(geometry.uniforms.uAzimuth, viewX * 0.24);
+      gl.uniform1f(geometry.uniforms.uInner, camera.inner);
+      gl.uniform4f(geometry.uniforms.uImpactBreaks, ...impactBreaks);
+      gl.uniform1f(geometry.uniforms.uMaxAngle, maxAngle);
+      sample(geometry, "uRays", 0, rayTexture);
+      draw();
+      viewDirty = false;
+    }
+
     function render(time) {
+      if (viewDirty) updateOpticalMap();
       use(emission, hdr, time);
       maps.textures.forEach((texture, i) => sample(emission, `uMap${i}`, i, texture));
       draw();
@@ -169,6 +245,8 @@
     canvas.classList.add("is-rendered");
 
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    const pointer = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+    const hero = canvas.closest(".hero");
     let visible = true;
     let frame = 0;
     let lastFrame = 0;
@@ -178,7 +256,14 @@
     function animate(now) {
       if (gl.isContextLost()) return;
       if (now - lastFrame >= 1000 / 30) {
-        time = (time + Math.min((now - lastFrame) / 1000, 0.07) * playbackRate) % 8;
+        const dt = Math.min((now - lastFrame) / 1000, 0.07);
+        const ease = 1 - Math.exp(-8 * dt);
+        if (Math.abs(targetX - viewX) > 0.0005 || Math.abs(targetY - viewY) > 0.0005) {
+          viewX += (targetX - viewX) * ease;
+          viewY += (targetY - viewY) * ease;
+          viewDirty = true;
+        }
+        time = (time + dt * playbackRate) % 8;
         render(time);
         lastFrame = now;
       }
@@ -199,7 +284,24 @@
     });
     visibilityObserver.observe(canvas);
     document.addEventListener("visibilitychange", syncAnimation, { signal });
-    motion.addEventListener("change", syncAnimation, { signal });
+    const resetView = () => { targetX = targetY = 0; };
+    pointer.addEventListener("change", resetView, { signal });
+    hero.addEventListener("pointerleave", resetView, { signal });
+    hero.addEventListener("pointermove", (event) => {
+      if (!pointer.matches || event.pointerType === "touch") return;
+      const bounds = hero.getBoundingClientRect();
+      targetX = 2 * (event.clientX - bounds.left) / bounds.width - 1;
+      targetY = 1 - 2 * (event.clientY - bounds.top) / bounds.height;
+    }, { passive: true, signal });
+    motion.addEventListener("change", () => {
+      if (motion.matches && !gl.isContextLost()) {
+        resetView();
+        viewX = viewY = 0;
+        viewDirty = true;
+        render(time);
+      }
+      syncAnimation();
+    }, { signal });
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {

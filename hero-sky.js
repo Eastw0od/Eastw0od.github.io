@@ -1,6 +1,8 @@
 (() => {
+  if (new URLSearchParams(window.location.search).get("look") === "mono") {
+    document.documentElement.dataset.blackHoleLook = "mono";
+  }
   const sky = document.querySelector(".hero-sky");
-  const hero = sky.closest(".hero");
   const context = sky.getContext("2d");
   const haze = document.createElement("canvas");
   const hazeContext = haze.getContext("2d");
@@ -82,24 +84,4 @@
   }
 
   new ResizeObserver(drawSky).observe(sky);
-
-  const canTilt = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
-  function setView(x, y) {
-    hero.style.setProperty("--hole-x", `${x * 34}px`);
-    hero.style.setProperty("--hole-y", `${y * 21}px`);
-    hero.style.setProperty("--hole-yaw", `${x * 8}deg`);
-    hero.style.setProperty("--hole-pitch", `${-y * 5}deg`);
-    hero.style.setProperty("--sky-x", `${-x * 11}px`);
-    hero.style.setProperty("--sky-y", `${-y * 7}px`);
-  }
-
-  const resetView = () => setView(0, 0);
-  hero.addEventListener("pointermove", (event) => {
-    if (!canTilt.matches || event.pointerType === "touch") return;
-    const bounds = hero.getBoundingClientRect();
-    setView(2 * (event.clientX - bounds.left) / bounds.width - 1,
-      2 * (event.clientY - bounds.top) / bounds.height - 1);
-  }, { passive: true });
-  hero.addEventListener("pointerleave", resetView);
-  canTilt.addEventListener("change", resetView);
 })();

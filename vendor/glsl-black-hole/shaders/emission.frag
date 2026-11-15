@@ -151,7 +151,7 @@ void main() {
     float silk=fbmP(vec2(radius*12.0+(stream-0.5)*0.6,az*32.0-uTime/8.0*8.0),8.0,27.5/uResolution.y*12.0);
     float arcMask=smoothstep(0.018,0.055,abs(q.y));
     col*=mix(1.0,0.58+0.84*silk,arcMask);
-    float px=27.5/uResolution.y;
+    float px=max(fwidth(radius)*0.85,0.016);
     float d=abs(radius-2.598);
     float ring=(1.0-smoothstep(px*0.08,px*0.76,d))*0.54;
     ring+=0.055*exp(-pow(d/(px*2.5),2.0));

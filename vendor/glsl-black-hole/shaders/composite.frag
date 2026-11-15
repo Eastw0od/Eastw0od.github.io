@@ -30,7 +30,7 @@ void main() {
     float holeMask=smoothstep(0.093,0.102,length(p));
     float flare=dot(0.07*b2+0.035*b3,vec3(0.26,0.60,0.14));
     col+=amber*flare*(1.0-brightness)*mix(0.2,1.0,holeMask);
-    col*=0.98+0.04*hash21(gl_FragCoord.xy);
+    col*=0.988+0.024*hash21(gl_FragCoord.xy);
     col*=1.0-0.16*smoothstep(0.48,0.78,length(uv-0.5));
     vec2 edge=min(uv,1.0-uv);
     float fade=smoothstep(0.0,0.14,min(edge.x,edge.y));

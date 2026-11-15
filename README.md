@@ -6,7 +6,7 @@ A personal portfolio with a WebGL black hole, selected work, linked services, an
 
 All personal text, project entries, services, links, and films live in `profile.js`. The page structure is in `index.html` and visual styling is in `styles.css`.
 
-The WebGL renderer in `black-hole.js` adapts the viewer from [sayed1145/glsl-black-hole at 4f21a8d](https://github.com/sayed1145/glsl-black-hole/tree/4f21a8d393cce82ad1ca323ec1acda05f6f570f9). The vendored shaders retain their MIT license. The homepage changes the composition, timing, and the color grade in `composite.frag`.
+The WebGL renderer in `black-hole.js` adapts the viewer from [sayed1145/glsl-black-hole at 4f21a8d](https://github.com/sayed1145/glsl-black-hole/tree/4f21a8d393cce82ad1ca323ec1acda05f6f570f9). The vendored shaders retain their MIT license. The homepage changes the composition, timing, and color grade. A shared table of ray paths lets pointer input change the viewing angle without tracing every ray again.
 
 ## Preview locally
 
@@ -15,6 +15,8 @@ python -m http.server 4173
 ```
 
 Then open `http://localhost:4173`.
+
+Append `?look=mono` to preview the monochrome black hole.
 
 ## GitHub Pages
 
