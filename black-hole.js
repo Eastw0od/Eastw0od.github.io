@@ -4,8 +4,8 @@
   const canvas = document.querySelector("#singularity");
   const scriptUrl = new URL(document.currentScript.src);
   const shaderNames = ["geometry", "emission", "blur", "composite"];
-  const camera = { center: [0.5, 0.48], tilt: 0.09, scale: 27.5, inclination: 0.087, inner: 1.51 };
-  const playbackRate = 0.4;
+  const camera = { center: [0.5, 0.48], tilt: 0.025, scale: 27.5, inclination: 0.052, inner: 1.51 };
+  const playbackRate = 0.16;
   const impactBreaks = [0, 2.4, 2.82, 22];
   const samplesPerBand = 1024;
   const impactSamples = 3 * samplesPerBand + 1;

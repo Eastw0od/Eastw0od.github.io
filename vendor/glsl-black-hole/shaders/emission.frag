@@ -123,15 +123,15 @@ vec3 plasma(vec4 data) {
     float finewarp=noiseP(vec2(r*5.3,a*64.0-t*32.0+r*0.3),16.0);
     float rw=r+(swirl-0.5)*0.25+(finewarp-0.5)*0.055;
     float footprint=abs(dFdx(r))+abs(dFdy(r));
-    float filament=fbmP(vec2(rw*8.0,a*60.0-t*15.0+rw*0.18),15.0,footprint*8.0);
-    float filament2=fbmP(vec2(rw*2.0+72.0,a*128.0-t*64.0),32.0,footprint*2.0);
-    float density=pow(0.10+1.64*filament,2.25);
-    density*=0.65+0.74*filament2;
+    float filament=fbmP(vec2(rw*8.0,a*180.0-t*45.0+rw*0.18),45.0,footprint*8.0);
+    float filament2=fbmP(vec2(rw*2.0+72.0,a*256.0-t*64.0),64.0,footprint*2.0);
+    float density=pow(0.36+1.18*filament,1.35);
+    density*=0.78+0.44*filament2;
     vec2 pp=(gl_FragCoord.xy-uCenter*uResolution)/uResolution.y;
     bool upper=(-sin(uTilt)*pp.x+cos(uTilt)*pp.y)>=0.0;
     float front=pow(max(0.0,sin(phi)),8.0)*(1.0-smoothstep(0.12,0.32,data.z));
-    float frontBoost=1.0+1.9*front*smoothstep(6.0,9.5,r);
-    float outerFade=1.0-smoothstep(11.8,15.0,r);
+    float frontBoost=1.0+0.35*front*smoothstep(6.0,9.5,r);
+    float outerFade=1.0-smoothstep(9.0,12.8,r);
     return fittedRadiance(r,data.z,upper)*(density/0.84)*frontBoost*outerFade;
 
 }
@@ -146,11 +146,7 @@ void main() {
     float radius=length(p)*27.5;
     vec2 q=mat2(cos(uTilt),-sin(uTilt),sin(uTilt),cos(uTilt))*p;
     col*=max(smoothstep(2.61,2.68,radius),1.0-smoothstep(0.040,0.058,abs(q.y)));
-    float az=atan(q.y,q.x)/TAU;
-    float stream=noiseP(vec2(radius*2.2,az*20.0-uTime/8.0*5.0),5.0);
-    float silk=fbmP(vec2(radius*12.0+(stream-0.5)*0.6,az*32.0-uTime/8.0*8.0),8.0,27.5/uResolution.y*12.0);
-    float arcMask=smoothstep(0.018,0.055,abs(q.y));
-    col*=mix(1.0,0.58+0.84*silk,arcMask);
+    // Detail belongs to the orbiting plasma, not concentric screen-space rings.
     // Sparse hot dust drifting through the projected accretion plane. Two
     // differently scaled fields keep the grains crisp without a texture.
     vec2 dustUv=vec2(q.x*205.0-uTime*2.1,q.y*330.0);
@@ -167,11 +163,11 @@ void main() {
     float moteSeed=hash21(moteId+41.8);
     float motes=(1.0-smoothstep(0.025,0.095,length(moteCell-(vec2(hash21(moteId+1.2),hash21(moteId+5.4))-0.5)*0.6)));
     motes*=step(0.91,moteSeed)*exp(-pow(abs(q.y)/0.078,1.35))*dustMask;
-    col+=(sparks*0.54+motes*0.34)*mix(vec3(1.0,0.48,0.22),vec3(1.0,0.92,0.72),dustSeed);
+    col+=(sparks*0.12+motes*0.08)*mix(vec3(1.0,0.48,0.22),vec3(1.0,0.92,0.72),dustSeed);
     float px=max(fwidth(radius)*0.85,0.016);
     float d=abs(radius-2.598);
-    float ring=(1.0-smoothstep(px*0.08,px*0.76,d))*0.54;
-    ring+=0.055*exp(-pow(d/(px*2.5),2.0));
+    float ring=(1.0-smoothstep(px*0.08,px*0.76,d))*0.18;
+    ring+=0.025*exp(-pow(d/(px*2.5),2.0));
     float upper=smoothstep(-0.01,0.03,p.y);
     ring*=mix(0.42,1.0,upper);
     col+=ring*vec3(1.0,0.64,0.46);
