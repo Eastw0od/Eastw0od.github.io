@@ -50,6 +50,7 @@
   const canvas = document.querySelector("#rain");
   const ctx = canvas.getContext("2d");
   let drops = [];
+  let sparks = [];
   let raf;
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -63,6 +64,15 @@
       v: 7 + Math.random() * 12,
       a: .06 + Math.random() * .18
     }));
+    sparks = Array.from({ length: Math.floor(innerWidth / 8) }, () => ({
+      x: Math.random() * innerWidth * .72,
+      y: Math.random() * innerHeight,
+      s: Math.random() < .82 ? 1 : 2 + Math.random() * 2,
+      vx: -.08 + Math.random() * .16,
+      vy: -.1 - Math.random() * .22,
+      phase: Math.random() * Math.PI * 2,
+      hue: Math.random() < .72 ? 320 : 192
+    }));
   };
   const draw = () => {
     ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -75,6 +85,22 @@
       ctx.stroke();
       d.y += d.v;
       if (d.y > innerHeight) { d.y = -d.l; d.x = Math.random() * innerWidth; }
+    });
+    const t = performance.now() * .002;
+    sparks.forEach((p) => {
+      const alpha = .08 + Math.max(0, Math.sin(t + p.phase)) * .55;
+      ctx.fillStyle = `hsla(${p.hue}, 100%, 68%, ${alpha})`;
+      ctx.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s);
+      if (alpha > .48) {
+        ctx.fillStyle = `hsla(${p.hue}, 100%, 75%, ${alpha * .18})`;
+        ctx.fillRect(p.x - 3, p.y, p.s + 6, 1);
+      }
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.y < -4 || p.x < -4) {
+        p.x = Math.random() * innerWidth * .72;
+        p.y = innerHeight + Math.random() * 30;
+      }
     });
     raf = requestAnimationFrame(draw);
   };
